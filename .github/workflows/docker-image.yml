@@ -34,7 +34,7 @@ jobs:
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./reactfrontend
-          file: ./reactfrontend/frontend.Dockerfile
+          context: ./frontend-reactapp
+          file: ./frontend-reactapp/frontend.Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/2300030394-exam-frontend:final
