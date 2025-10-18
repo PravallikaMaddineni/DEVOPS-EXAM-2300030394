@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  mysqldb:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: productdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  backend:
+    image: pravallikamaddineni/2300030394-exam-backend:final
+    container_name: springboot
+    ports:
+      - "2000:2000"
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/projectdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+
+  frontend:
+    image: pravallikamaddineni/2300030394-exam-frontend:final
+    container_name: react
+    ports:
+      - "2001:80"
+    depends_on:
+      - backend
+    restart: on-failure
+    environment:
+      VITE_API_URL: http://localhost:2000
+
+volumes:
+  mysql_data:
