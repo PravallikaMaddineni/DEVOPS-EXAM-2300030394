@@ -16,7 +16,7 @@ services:
     image: pravallikamaddineni/2300030394-exam-backend:final
     container_name: springboot
     ports:
-      - "2025:2000"
+      - "2000:2000"
     depends_on:
       - mysqldb
     restart: on-failure
